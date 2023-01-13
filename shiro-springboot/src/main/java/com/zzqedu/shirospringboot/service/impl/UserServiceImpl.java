@@ -9,6 +9,7 @@ import com.zzqedu.shirospringboot.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
 * @author zzq12
@@ -31,6 +32,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public int saveUser(User user) {
         return userMapper.insert(user);
+    }
+
+    @Override
+    public List<String> getUserRolesByName(String name) {
+        return userMapper.getUserRolesByName(name);
+    }
+
+    @Override
+    public List<String> getUserPermissions(List<String> roles) {
+        return userMapper.getUserPermissions(roles);
     }
 }
 

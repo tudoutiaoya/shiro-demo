@@ -14,6 +14,7 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Component
 public class MyRealm extends AuthorizingRealm {
@@ -24,7 +25,22 @@ public class MyRealm extends AuthorizingRealm {
     // 自定义授权的方法
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return null;
+        System.out.println("进入自定义授权方法");
+        // 1. 获取当前用户身份信息
+        User user = (User) principals.getPrimaryPrincipal();
+        System.out.println("获取当前用户身份信息pricipal: " + user);
+        // 2. 调用接口方法获取角色的信息
+        List<String> roles = userService.getUserRolesByName(user.getName());
+        System.out.println("当前用户角色信息: " + roles);
+        List<String> permissions = userService.getUserPermissions(roles);
+        // 创建对象，存储当前登录的用户的权限和角色
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        // 存储角色
+        info.addRoles(roles);
+        // 存储权限信息
+        info.addStringPermissions(permissions);
+        // 返回
+        return info;
     }
 
     // 自定义登录认证的方法
