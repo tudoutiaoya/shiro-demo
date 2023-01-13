@@ -1,10 +1,13 @@
 package com.zzqedu.shirospringboot.config;
 
-import org.apache.catalina.Realm;
+
+import net.sf.ehcache.CacheManager;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
+import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.shiro.io.ResourceUtils;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -13,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +44,23 @@ public class ShiroConfig {
         defaultWebSecurityManager.setRealm(myRealm);
         // 4.5 设置rememberMe
         defaultWebSecurityManager.setRememberMeManager(rememberMeManager());
+        // 4.6 设置缓存管理器
+        defaultWebSecurityManager.setCacheManager(getEhcacheManager());
         // 返回
         return defaultWebSecurityManager;
+    }
+
+    private EhCacheManager getEhcacheManager() {
+        EhCacheManager ehCacheManager = new EhCacheManager();
+        InputStream is = null;
+        try {
+            is = ResourceUtils.getInputStreamForPath("classpath:ehcache/ehcache-shiro.xml");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        CacheManager cacheManager = new CacheManager(is);
+        ehCacheManager.setCacheManager(cacheManager);
+        return ehCacheManager;
     }
 
 
