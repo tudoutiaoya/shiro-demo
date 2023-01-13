@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 9999
 
 mybatis-plus:
   configuration:
@@ -17,5 +17,5 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT-8
 
-shiro:
-  loginUrl: /myController/login
+#shiro:
+#  loginUrl: /myController/login
